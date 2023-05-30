@@ -1,5 +1,17 @@
 # -*- mode: Python -*-
 
-docker_build('example-go-image', '.', dockerfile='deployments/Dockerfile')
+# docker_build('example-go-image', '.', dockerfile='deployments/Dockerfile')
+
+docker_build('example-go-image', '.',
+    dockerfile='./deployments/Dockerfile',
+    entrypoint='$GOPATH/bin/dlv --listen=:40000 --api-version=2 --headless=true exec ./tilt-example-go',
+    # live_update=[
+    #     sync('.', '/app'),
+    #     run('go build -gcflags "-N -l" -o /app/build/api /app/cmd'),
+    # ]
+)
+
 k8s_yaml('deployments/kubernetes.yaml')
-k8s_resource('example-go', port_forwards=8000)
+k8s_resource('example-go', port_forwards=[8000,40000])
+
+
