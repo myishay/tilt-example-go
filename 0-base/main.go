@@ -24,6 +24,9 @@ func NewExampleRouter() *ExampleRouter {
 
 func main() {
 	http.Handle("/", NewExampleRouter())
+	http.HandleFunc("/hello", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("Hello, !"))
+	})
 
 	log.Println("Serving on port 8000")
 	err := http.ListenAndServe(":8000", nil)
